@@ -1,0 +1,185 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["auth", "public"]
+}
+
+model AcademicTerm {
+  academicTermId BigInt     @id @default(autoincrement()) @map("academic_term_id")
+  startOn        DateTime   @map("start_on") @db.Date
+  endOn          DateTime?  @map("end_on") @db.Date
+  schoolYearId   BigInt     @map("school_year_id")
+  number         Int
+  schoolYear     SchoolYear @relation(fields: [schoolYearId], references: [schoolYearId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("academic_term")
+  @@schema("public")
+}
+
+model SchoolClass {
+  schoolClassId BigInt   @id @default(autoincrement()) @map("school_class_id")
+  startTime     DateTime @map("start_time") @db.Time(6)
+  endTime       DateTime @map("end_time") @db.Time(6)
+  dayOfWeek     Int      @map("day_of_week")
+  teacherId     BigInt   @map("teacher_id")
+  subjectId     BigInt   @map("subject_id")
+  sectionId     BigInt   @map("section_id")
+  name          String
+  section       Section  @relation(fields: [sectionId], references: [sectionId], onDelete: NoAction, onUpdate: NoAction)
+  subject       Subject  @relation(fields: [subjectId], references: [subjectId], onDelete: NoAction, onUpdate: NoAction)
+  teacher       Teacher  @relation(fields: [teacherId], references: [teacherId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([startTime, dayOfWeek, teacherId, subjectId, sectionId, name, endTime], map: "school_class_start_time_day_of_week_teacher_id_subject_id_secti")
+  @@map("school_class")
+  @@schema("public")
+}
+
+model SchoolYear {
+  schoolYearId  BigInt         @id @default(autoincrement()) @map("school_year_id")
+  name          String
+  openOn        DateTime?      @map("open_on") @db.Date
+  closeOn       DateTime?      @map("close_on") @db.Date
+  academicTerms AcademicTerm[]
+
+  @@map("school_year")
+  @@schema("public")
+}
+
+model Section {
+  sectionId         BigInt             @id @default(autoincrement()) @map("section_id")
+  name              String
+  yearLevelId       BigInt             @map("year_level_id")
+  schoolClasses     SchoolClass[]
+  yearLevel         YearLevel          @relation(fields: [yearLevelId], references: [yearLevelId], onDelete: NoAction, onUpdate: NoAction)
+  seniorHighSection SeniorHighSection?
+
+  @@unique([yearLevelId, name])
+  @@map("section")
+  @@schema("public")
+}
+
+model SeniorHighSection {
+  sectionId          BigInt  @id @map("section_id")
+  seniorHighStrandId BigInt? @map("senior_high_strand_id")
+  seniorHighTrackId  BigInt  @map("senior_high_track_id")
+  section            Section @relation(fields: [sectionId], references: [sectionId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("senior_high_section")
+  @@schema("public")
+}
+
+model SeniorHighStrand {
+  seniorHighStrandId BigInt @id @default(autoincrement()) @map("senior_high_strand_id")
+  name               String
+  description        String
+
+  @@map("senior_high_strand")
+  @@schema("public")
+}
+
+model SeniorHighTrack {
+  seniorHighTrackId BigInt @id @default(autoincrement()) @map("senior_high_track_id")
+  name              String @unique
+  description       String
+
+  @@map("senior_high_track")
+  @@schema("public")
+}
+
+model Subject {
+  subjectId     BigInt        @id @default(autoincrement()) @map("subject_id")
+  name          String
+  commonName    String        @map("common_name")
+  colorHex      String        @map("color_hex")
+  isArchived    Boolean       @map("is_archived")
+  schoolClasses SchoolClass[]
+
+  @@map("subject")
+  @@schema("public")
+}
+
+model Teacher {
+  teacherId     BigInt        @id @default(autoincrement()) @map("teacher_id")
+  firstName     String        @map("first_name")
+  middleName    String        @map("middle_name")
+  lastName      String        @map("last_name")
+  suffix        String
+  nickname      String
+  sex           Int
+  isArchived    Boolean       @map("is_archived")
+  schoolClasses SchoolClass[]
+
+  @@map("teacher")
+  @@schema("public")
+}
+
+model YearLevel {
+  yearLevelId BigInt    @id @default(autoincrement()) @map("year_level_id")
+  name        String    @unique
+  shortName   String    @unique @map("short_name")
+  sortOrder   BigInt    @default(autoincrement()) @map("sort_order")
+  isArchived  Boolean   @map("is_archived")
+  sections    Section[]
+
+  @@map("year_level")
+  @@schema("public")
+}
+
+model AppPermission {
+  appPermissionId    BigInt              @id @default(autoincrement()) @map("app_permission_id")
+  name               String              @unique
+  appRolePermissions AppRolePermission[]
+
+  @@map("app_permission")
+  @@schema("auth")
+}
+
+model AppRole {
+  appRoleId          Int                 @id @map("app_role_id")
+  name               String              @unique
+  appRolePermissions AppRolePermission[]
+  appUserRoles       AppUserRole[]
+
+  @@map("app_role")
+  @@schema("auth")
+}
+
+model AppRolePermission {
+  appRolePermissionId BigInt        @id @default(autoincrement()) @map("app_role_permission_id")
+  appRoleId           Int           @map("app_role_id")
+  appPermissionId     BigInt        @map("app_permission_id")
+  appPermission       AppPermission @relation(fields: [appPermissionId], references: [appPermissionId], onDelete: NoAction, onUpdate: NoAction)
+  appRole             AppRole       @relation(fields: [appRoleId], references: [appRoleId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([appRoleId, appPermissionId])
+  @@map("app_role_permission")
+  @@schema("auth")
+}
+
+model AppUser {
+  appUserId    BigInt        @id @default(autoincrement()) @map("app_user_id")
+  username     String        @unique
+  passwordHash String        @map("password_hash")
+  userStatus   String        @default("active") @map("user_status")
+  appUserRoles AppUserRole[]
+
+  @@map("app_user")
+  @@schema("auth")
+}
+
+model AppUserRole {
+  appUserRoleId BigInt  @id @default(autoincrement()) @map("app_user_role_id")
+  appUserId     BigInt  @map("app_user_id")
+  appRoleId     Int     @map("app_role_id")
+  appRole       AppRole @relation(fields: [appRoleId], references: [appRoleId], onDelete: NoAction, onUpdate: NoAction)
+  appUser       AppUser @relation(fields: [appUserId], references: [appUserId], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([appUserId, appRoleId])
+  @@map("app_user_role")
+  @@schema("auth")
+}

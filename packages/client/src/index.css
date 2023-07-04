@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --scrollbar-foreground: white;
+    --scrollbar-background: darkgray;
+  }
+  /* Firefox */
+  * {
+    scrollbar-width: 16px;
+    scrollbar-color: var(--scrollbar-background) var(--scrollbar-foreground);
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-foreground);
+    border-radius: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: gray;
+    border-radius: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-background);
+    border-radius: 8px;
+    border: 4px solid var(--scrollbar-foreground);
+  }
+
+  /* montserrat-300 - latin */
+  @font-face {
+    font-display: block; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 300;
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-300.eot"); /* IE9 Compat Modes */
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-300.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-300.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-300.woff")
+        format("woff"),
+      /* Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-300.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-300.svg#Montserrat")
+        format("svg"); /* Legacy iOS */
+  }
+  /* montserrat-regular - latin */
+  @font-face {
+    font-display: block; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 400;
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-regular.eot"); /* IE9 Compat Modes */
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-regular.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-regular.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-regular.woff")
+        format("woff"),
+      /* Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-regular.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-regular.svg#Montserrat")
+        format("svg"); /* Legacy iOS */
+  }
+  /* montserrat-italic - latin */
+  @font-face {
+    font-display: block; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: "Montserrat";
+    font-style: italic;
+    font-weight: 400;
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-italic.eot"); /* IE9 Compat Modes */
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-italic.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-italic.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-italic.woff")
+        format("woff"),
+      /* Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-italic.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-italic.svg#Montserrat")
+        format("svg"); /* Legacy iOS */
+  }
+  /* montserrat-500 - latin */
+  @font-face {
+    font-display: block; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-500.eot"); /* IE9 Compat Modes */
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-500.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-500.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-500.woff")
+        format("woff"),
+      /* Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-500.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-500.svg#Montserrat")
+        format("svg"); /* Legacy iOS */
+  }
+  /* montserrat-700 - latin */
+  @font-face {
+    font-display: block; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 700;
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-700.eot"); /* IE9 Compat Modes */
+    src: url("assets/fonts/Montserrat/montserrat-v25-latin-700.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-700.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-700.woff")
+        format("woff"),
+      /* Modern Browsers */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-700.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("assets/fonts/Montserrat/montserrat-v25-latin-700.svg#Montserrat")
+        format("svg"); /* Legacy iOS */
+  }
+
+  /* oswald-regular - latin */
+  @font-face {
+    font-display: block; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: "Oswald";
+    font-style: normal;
+    font-weight: 400;
+    src: url("assets/fonts/Oswald/oswald-v49-latin-regular.eot"); /* IE9 Compat Modes */
+    src: url("assets/fonts/Oswald/oswald-v49-latin-regular.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */ url("assets/fonts/Oswald/oswald-v49-latin-regular.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("assets/fonts/Oswald/oswald-v49-latin-regular.woff") format("woff"),
+      /* Modern Browsers */
+        url("assets/fonts/Oswald/oswald-v49-latin-regular.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("assets/fonts/Oswald/oswald-v49-latin-regular.svg#Oswald")
+        format("svg"); /* Legacy iOS */
+  }
+  /* oswald-700 - latin */
+  @font-face {
+    font-display: block; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: "Oswald";
+    font-style: normal;
+    font-weight: 700;
+    src: url("assets/fonts/Oswald/oswald-v49-latin-700.eot"); /* IE9 Compat Modes */
+    src: url("assets/fonts/Oswald/oswald-v49-latin-700.eot?#iefix")
+        format("embedded-opentype"),
+      /* IE6-IE8 */ url("assets/fonts/Oswald/oswald-v49-latin-700.woff2")
+        format("woff2"),
+      /* Super Modern Browsers */
+        url("assets/fonts/Oswald/oswald-v49-latin-700.woff") format("woff"),
+      /* Modern Browsers */ url("assets/fonts/Oswald/oswald-v49-latin-700.ttf")
+        format("truetype"),
+      /* Safari, Android, iOS */
+        url("assets/fonts/Oswald/oswald-v49-latin-700.svg#Oswald") format("svg"); /* Legacy iOS */
+  }
+}
