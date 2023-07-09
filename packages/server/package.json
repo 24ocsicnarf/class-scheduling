@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "db:update": "npx prisma db pull && yarn prisma generate && npx prisma-case-format -p --file ./prisma/schema.prisma",
-    "db:migrate": "npx prisma migrate dev --name user-entity --create-only && yarn prisma generate",
+    "db:update": "npx prisma db pull && pnpm prisma generate && npx prisma-case-format -p --file ./prisma/schema.prisma",
+    "db:migrate": "npx prisma migrate dev --name user-entity --create-only && pnpm prisma generate",
     "test": "vitest --coverage"
   },
   "devDependencies": {
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@prisma/client": "^4.13.0",
-    "@trpc/server": "^10.0.0-rc.5",
+    "@trpc/server": "^10.34.0",
     "@types/bcrypt": "^5.0.0",
     "@types/cookie": "^0.5.1",
     "@types/cookie-parser": "^1.4.3",

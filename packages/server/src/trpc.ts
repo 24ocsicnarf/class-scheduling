@@ -48,7 +48,7 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
 });
 
 interface AccessTokenPayload extends jwt.JwtPayload {
-  userId: BigInt;
+  userId: bigint;
 }
 
 export const verifyToken = (token: string) => {

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { trpc } from "client/src/trpc";
+import { trpc } from "@/trpc";
 
 const Navbar = () => {
   const navigate = useNavigate();

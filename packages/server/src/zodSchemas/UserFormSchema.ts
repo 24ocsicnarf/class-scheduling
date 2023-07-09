@@ -1,6 +1,11 @@
 import { ZodType, z, TypeOf } from "zod";
 
+export const UserPasswordSchema = z
+  .string()
+  .min(8, "Password should have at least 8 characters");
+
 const schema = z.object({
+  roleId: z.string(),
   username: z.string().superRefine(async (val, ctx) => {
     if (val.length == 0) {
       ctx.addIssue({
@@ -45,8 +50,10 @@ const schema = z.object({
       return z.NEVER;
     }
   }),
-  password: z.string().min(8, "Password should have at least 8 characters"),
+  password: UserPasswordSchema,
 });
+
+export type UserPasswordData = TypeOf<typeof UserPasswordSchema>;
 
 export const UserFormSchema: ZodType<UserFormData> = schema;
 export type UserFormData = TypeOf<typeof schema>;

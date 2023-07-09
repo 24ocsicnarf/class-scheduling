@@ -20,7 +20,8 @@ function App() {
     if (
       code === "BAD_REQUEST" ||
       code === "FORBIDDEN" ||
-      code === "UNAUTHORIZED"
+      code === "UNAUTHORIZED" ||
+      code === "CONFLICT"
     ) {
       return false;
     }

@@ -7,8 +7,9 @@ import {
   LoginFormSchema,
 } from "server/src/zodSchemas/LoginFormSchema";
 import { useNavigate } from "react-router-dom";
-import Button from "../../../components/Button";
-import TextField from "../../../components/TextField";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export const LoginForm = () => {
           >
             Username
           </label>
-          <TextField {...register("username")} placeholder="Enter username" />
+          <Input {...register("username")} placeholder="Enter username" />
         </div>
         <div className="flex flex-col">
           <label
@@ -49,7 +50,7 @@ export const LoginForm = () => {
           >
             Password
           </label>
-          <TextField
+          <Input
             type="password"
             {...register("password")}
             placeholder="Enter password"
