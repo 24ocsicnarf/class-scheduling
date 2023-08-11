@@ -2,7 +2,8 @@
   "name": "class-scheduling",
   "private": "true",
   "scripts": {
-    "start": "concurrently \"wsrun --parallel start\""
+    "start": "concurrently \"wsrun --parallel start\"",
+    "build": "wsrun --parallel build"
   },
   "workspaces": [
     "packages/*"
