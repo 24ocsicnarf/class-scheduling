@@ -12,6 +12,7 @@ function off(eventType: any, listener: any) {
 function once(eventType: any, listener: any) {
   on(eventType, handleEventOnce);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function handleEventOnce(event: any) {
     listener(event);
     off(eventType, handleEventOnce);

@@ -1,7 +1,7 @@
-import { trpc } from "@/trpc";
+// import { trpc } from "@/trpc";
 
-export const useClassScheduling = () => {
-  const academicClassSchedules = trpc.classSchedule.getClassSchedules.useQuery({
-    academicTermId: Number(1),
-  });
-};
+// export const useClassScheduling = () => {
+//   const academicClassSchedules = trpc.classSchedule.getClassSchedules.useQuery({
+//     academicTermId: Number(1),
+//   });
+// };

@@ -1,4 +1,5 @@
-import { ColumnDef } from "@tanstack/react-table";
+/* eslint-disable react-refresh/only-export-components */
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
 import { UserDeactivationDialogContent } from "../UserDeactivationDialogContent";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
-import { trpc } from "@/trpc";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { UserReactivationForm } from "../UserReactivationForm";
@@ -148,52 +148,69 @@ export function getAppUserColumns(
       id: "actions",
       size: 1,
       cell: ({ row }) => {
-        console.log("rendered");
-        const [dialogOpen, setDialogOpen] = useState(false);
-
-        function handleUpdate(data: FormResult) {
-          setDialogOpen(false);
-          onDataChanged(data);
-        }
-
         return (
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{row.original.username}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Change role</DropdownMenuItem>
-                <DropdownMenuItem>Reset password</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DialogTrigger asChild>
-                  {view == UsersView.active ? (
-                    <DropdownMenuItem>Deactivate user</DropdownMenuItem>
-                  ) : (
-                    <DropdownMenuItem>Reactivate user</DropdownMenuItem>
-                  )}
-                </DialogTrigger>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {view == UsersView.active ? (
-              <UserDeactivationDialogContent
-                users={[row.original]}
-                onDeactivate={handleUpdate}
-              />
-            ) : (
-              <UserReactivationForm
-                users={[row.original]}
-                onReactivate={handleUpdate}
-              />
-            )}
-          </Dialog>
+          <UserActionDialog
+            row={row}
+            view={view}
+            onDataChanged={onDataChanged}
+          />
         );
       },
     },
   ];
 }
+
+const UserActionDialog = ({
+  row,
+  view,
+  onDataChanged,
+}: {
+  row: Row<AppUserColumn>;
+  view: UsersView;
+  onDataChanged: (data: FormResult) => void;
+}) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  function handleUpdate(data: FormResult) {
+    setDialogOpen(false);
+    onDataChanged(data);
+  }
+
+  return (
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>{row.original.username}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Change role</DropdownMenuItem>
+          <DropdownMenuItem>Reset password</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DialogTrigger asChild>
+            {view == UsersView.active ? (
+              <DropdownMenuItem>Deactivate user</DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem>Reactivate user</DropdownMenuItem>
+            )}
+          </DialogTrigger>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {view == UsersView.active ? (
+        <UserDeactivationDialogContent
+          users={[row.original]}
+          onDeactivate={handleUpdate}
+        />
+      ) : (
+        <UserReactivationForm
+          users={[row.original]}
+          onReactivate={handleUpdate}
+        />
+      )}
+    </Dialog>
+  );
+};

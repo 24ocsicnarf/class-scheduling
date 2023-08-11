@@ -6,8 +6,7 @@
   "scripts": {
     "start": "ts-node-dev --respawn --transpile-only src/app.ts",
     "db:migrate": "npx prisma migrate dev --name user-entity --create-only && pnpm prisma generate",
-    "db:update": "pnpm exec prisma db pull && pnpm prisma generate && pnpm exec prisma-case-format -p --file ./prisma/schema.prisma",
-    "test": "vitest --coverage"
+    "db:update": "pnpm exec prisma db pull && pnpm prisma generate && pnpm exec prisma-case-format -p --file ./prisma/schema.prisma"
   },
   "devDependencies": {
     "@prisma/client": "^5.1.1",

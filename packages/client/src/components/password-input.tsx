@@ -5,8 +5,7 @@ import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs";
 import { Toggle } from "./ui/toggle";
 import { Input } from "./ui/input";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {

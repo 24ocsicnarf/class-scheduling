@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { DevTool } from "@hookform/devtools";
+// import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/trpc";
 import {
@@ -13,17 +12,6 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 
-import { MdCircle, MdOutlineCircle } from "react-icons/md";
-
-import {
-  TeacherFormData,
-  TeacherFormSchema,
-  TeacherFormObject,
-} from "server/src/zodSchemas/TeacherFormSchema";
-
-import { CirclePicker } from "react-color";
-import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
-import { PopoverContent } from "@/components/ui/popover";
 import { FormResult } from "server/src/types/FormResult";
 import {
   Select,
@@ -34,8 +22,6 @@ import {
 } from "@/components/ui/select";
 import { useFormDialog } from "@/components/hooks/use-form-dialog";
 import { FormDialog, FormContent } from "@/components/form-dialog";
-import { DEFAULT_MAX_INPUT_TEXT_LENGTH } from "@/constants";
-import { Sex } from "@/types/Sex";
 import {
   SeniorHighSectionFormData,
   SeniorHighSectionFormSchema,
@@ -118,7 +104,10 @@ export const SeniorHighSectionForm = ({
                     </FormControl>
                     <SelectContent>
                       {yearLevels?.map((yearLevel) => (
-                        <SelectItem value={yearLevel.yearLevelId.toString()}>
+                        <SelectItem
+                          key={Number(yearLevel.yearLevelId)}
+                          value={yearLevel.yearLevelId.toString()}
+                        >
                           {yearLevel.yearLevelName}
                         </SelectItem>
                       ))}
@@ -148,6 +137,7 @@ export const SeniorHighSectionForm = ({
                     <SelectContent>
                       {shsTracks?.map((shsTrack) => (
                         <SelectItem
+                          key={Number(shsTrack.seniorHighTrackId)}
                           value={shsTrack.seniorHighTrackId.toString()}
                         >
                           {shsTrack.seniorHighTrackName}
@@ -186,6 +176,7 @@ export const SeniorHighSectionForm = ({
                         )
                         ?.map((shsStrand) => (
                           <SelectItem
+                            key={Number(shsStrand.seniorHighStrandId)}
                             value={shsStrand.seniorHighStrandId.toString()}
                           >
                             {shsStrand.seniorHighStrandName}
@@ -235,21 +226,23 @@ export const EditSeniorHighSectionFormDialog = ({
       staleTime: Infinity,
     });
 
-  const [yearLevelsQuery, shsTracksQuery, shsStrandsQuery] = trpc.useQueries(
-    (t) => [
-      t.yearLevel.getYearLevels(undefined, { enabled: false }),
-      t.seniorHighTrack.getSeniorHighTracks(undefined, { enabled: false }),
-      t.seniorHighStrand.getSeniorHighStrands(undefined, { enabled: false }),
-    ]
-  );
+  const [
+    { data: yearLevelsData, refetch: refetchYearLevels },
+    { data: shsTracksData, refetch: refetchShsTracks },
+    { data: shsStrandsData, refetch: refetchShsStrands },
+  ] = trpc.useQueries((t) => [
+    t.yearLevel.getYearLevels(undefined, { enabled: false }),
+    t.seniorHighTrack.getSeniorHighTracks(undefined, { enabled: false }),
+    t.seniorHighStrand.getSeniorHighStrands(undefined, { enabled: false }),
+  ]);
 
   useEffect(() => {
     if (open) {
-      yearLevelsQuery.refetch();
-      shsTracksQuery.refetch();
-      shsStrandsQuery.refetch();
+      refetchYearLevels();
+      refetchShsTracks();
+      refetchShsStrands();
     }
-  }, [open]);
+  }, [open, refetchYearLevels, refetchShsTracks, refetchShsStrands]);
 
   return (
     seniorHighSectionQuery.data && (
@@ -264,9 +257,9 @@ export const EditSeniorHighSectionFormDialog = ({
             yearLevelId:
               seniorHighSectionQuery.data.classSection.yearLevel.yearLevelId,
           }}
-          yearLevels={yearLevelsQuery.data ?? []}
-          shsTracks={shsTracksQuery.data ?? []}
-          shsStrands={shsStrandsQuery.data ?? []}
+          yearLevels={yearLevelsData ?? []}
+          shsTracks={shsTracksData ?? []}
+          shsStrands={shsStrandsData ?? []}
           onSaved={(data) => {
             onSaved(data);
           }}

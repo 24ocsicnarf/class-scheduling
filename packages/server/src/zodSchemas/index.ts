@@ -1,8 +1,8 @@
-export { LoginFormData, LoginFormSchema } from "./LoginFormSchema";
+export { type LoginFormData, LoginFormSchema } from "./LoginFormSchema";
 export {
-  LoggedUserPasswordFormData,
+  type LoggedUserPasswordFormData,
   LoggedUserPasswordFormSchema,
 } from "./LoggedUserPasswordFormSchema";
-export { UserFormData, UserFormSchema } from "./UserFormSchema";
+export { type UserFormData, UserFormSchema } from "./UserFormSchema";
 
-export { SubjectFormData, SubjectFormSchema } from "./SubjectFormSchema";
+export { type SubjectFormData, SubjectFormSchema } from "./SubjectFormSchema";

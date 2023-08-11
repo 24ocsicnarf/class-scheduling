@@ -60,7 +60,7 @@ export function DataTable<TData, TValue, TView>({
   useEffect(() => {
     table.resetRowSelection();
     table.resetColumnFilters();
-  }, [view, data]);
+  }, [view, data, table]);
 
   return (
     <div className="space-y-3">

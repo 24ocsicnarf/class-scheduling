@@ -8,7 +8,7 @@ import { UserForm } from "@/features/auth/components/UserForm";
 import { toast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+// import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -145,7 +145,7 @@ const UsersPage = () => {
         ) : (
           <DataTable
             columns={getAppUserColumns(onUserChanged, usersView)}
-            data={mappedData!}
+            data={mappedData ?? []}
             view={usersView}
             searchPlaceholder="Search username..."
             facetedFilterColumns={[

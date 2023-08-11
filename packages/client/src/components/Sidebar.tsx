@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { MdCircle, MdDashboard, MdMenuOpen } from "react-icons/md";
+import { MdMenuOpen } from "react-icons/md";
 import { FaSchool } from "react-icons/fa";
 import SidebarItem from "./SidebarItem";
 import { useLocation } from "react-router-dom";
@@ -63,7 +63,7 @@ const Sidebar = (props: SidebarProps) => {
         className={`grow overflow-y-scroll overflow-x-hidden ${transitionDuration}`}
       >
         <div className="flex flex-col gap-1 ps-4 py-4">
-          {props.menuSections.map((section, index) => {
+          {props.menuSections.map((section) => {
             return (
               <Fragment key={section.title ?? "_"}>
                 {section.title && (
@@ -74,7 +74,7 @@ const Sidebar = (props: SidebarProps) => {
                     {section.title}
                   </span>
                 )}
-                {section.menus.map((menu, index) => {
+                {section.menus.map((menu) => {
                   return (
                     <SidebarItem
                       key={menu.path}

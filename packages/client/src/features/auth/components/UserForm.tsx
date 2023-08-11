@@ -1,15 +1,13 @@
 import { Input } from "@/components/ui/input";
 
-import { DevTool } from "@hookform/devtools";
+// import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   UserFormData,
   UserFormSchema,
 } from "server/src/zodSchemas/UserFormSchema";
 import { trpc } from "@/trpc";
-import { useState } from "react";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -21,9 +19,7 @@ import { useForm } from "react-hook-form";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -121,7 +117,10 @@ export const UserForm = ({
                     </FormControl>
                     <SelectContent>
                       {roles?.map((role) => (
-                        <SelectItem value={role.appRoleId.toString()}>
+                        <SelectItem
+                          key={Number(role.appRoleId)}
+                          value={role.appRoleId.toString()}
+                        >
                           {role.appRoleName}
                         </SelectItem>
                       ))}

@@ -1,6 +1,6 @@
 import { trpc } from "@/trpc";
 import { toast } from "@/components/ui/use-toast";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 
 import {
@@ -20,7 +20,7 @@ import { FormResult } from "server/src/types/FormResult";
 
 import { MasterDataView } from "@/types/master-data";
 
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { FormDialog } from "@/components/form-dialog";
 import { MdGroupWork } from "react-icons/md";
 import {
@@ -166,13 +166,15 @@ const SeniorHighSectionFormDialog = ({
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [yearLevelsQuery, shsTracksQuery, shsStrandsQuery] = trpc.useQueries(
-    (t) => [
-      t.yearLevel.getYearLevels(undefined, { enabled: false }),
-      t.seniorHighTrack.getSeniorHighTracks(undefined, { enabled: false }),
-      t.seniorHighStrand.getSeniorHighStrands(undefined, { enabled: false }),
-    ]
-  );
+  const [
+    { data: yearLevelsData, refetch: refetchYearLevels },
+    { data: shsTracksData, refetch: refetchShsTracks },
+    { data: shsStrandsData, refetch: refetchShsStrands },
+  ] = trpc.useQueries((t) => [
+    t.yearLevel.getYearLevels(undefined, { enabled: false }),
+    t.seniorHighTrack.getSeniorHighTracks(undefined, { enabled: false }),
+    t.seniorHighStrand.getSeniorHighStrands(undefined, { enabled: false }),
+  ]);
 
   function handleDialogOpen(open: boolean) {
     setDialogOpen(open);
@@ -184,11 +186,11 @@ const SeniorHighSectionFormDialog = ({
 
   useEffect(() => {
     if (dialogOpen) {
-      yearLevelsQuery.refetch();
-      shsTracksQuery.refetch();
-      shsStrandsQuery.refetch();
+      refetchYearLevels();
+      refetchShsTracks();
+      refetchShsStrands();
     }
-  }, [dialogOpen]);
+  }, [dialogOpen, refetchYearLevels, refetchShsTracks, refetchShsStrands]);
 
   return (
     <FormDialog
@@ -203,9 +205,9 @@ const SeniorHighSectionFormDialog = ({
       onOpenChange={handleDialogOpen}
     >
       <SeniorHighSectionForm
-        yearLevels={yearLevelsQuery.data ?? []}
-        shsTracks={shsTracksQuery.data ?? []}
-        shsStrands={shsStrandsQuery.data ?? []}
+        yearLevels={yearLevelsData ?? []}
+        shsTracks={shsTracksData ?? []}
+        shsStrands={shsStrandsData ?? []}
         onSaved={(data) => {
           setDialogOpen(false);
           onSaved && onSaved(data);

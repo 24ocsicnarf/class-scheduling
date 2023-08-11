@@ -4,12 +4,10 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { AppUserColumn } from "@/features/auth/components/table/user-columns";
-import { Separator } from "@radix-ui/react-dropdown-menu";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { trpc } from "@/trpc";

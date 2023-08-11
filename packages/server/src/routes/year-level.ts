@@ -1,16 +1,14 @@
-import { SubjectFormSchema } from "./../zodSchemas";
 import { protectedProcedure, router } from "../trpc";
-import { ZodError, ZodIssue, z } from "zod";
-import { FormResult } from "../types/FormResult";
-import { StatusCodes } from "http-status-codes";
-import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 export const yearLevelRouter = router({
   getYearLevels: protectedProcedure
     .input(
-      z.object({
-        isArchived: z.boolean().default(false),
-      }).optional()
+      z
+        .object({
+          isArchived: z.boolean().default(false),
+        })
+        .optional()
     )
     .query(async ({ input, ctx }) => {
       const isArchived = input?.isArchived ?? false;

@@ -1,9 +1,7 @@
-import { SubjectFormSchema } from "./../zodSchemas";
 import { protectedProcedure, router } from "../trpc";
 import { ZodError, ZodIssue, z } from "zod";
 import { FormResult } from "../types/FormResult";
 import { StatusCodes } from "http-status-codes";
-import { TRPCError } from "@trpc/server";
 import { SeniorHighSectionFormSchema } from "../zodSchemas/ClassSectionFormSchedule";
 
 export const sectionRouter = router({
@@ -15,8 +13,8 @@ export const sectionRouter = router({
         })
         .optional()
     )
-    .query(async ({ input, ctx }) => {
-      const isArchived = input?.isArchived ?? false;
+    .query(async ({ ctx }) => {
+      // const isArchived = input?.isArchived ?? false;
 
       return await ctx.prisma.seniorHighSection.findMany({
         include: {

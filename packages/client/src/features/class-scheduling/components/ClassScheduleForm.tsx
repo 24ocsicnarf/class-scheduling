@@ -7,13 +7,6 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Form,
   FormControl,
   FormField,
@@ -38,9 +31,9 @@ import {
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, ChevronsUpDown, PlusSquare } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { FieldValues, useForm, useWatch } from "react-hook-form";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   ClassScheduleFormData,
   ClassScheduleFormSchema,
@@ -50,8 +43,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
-import { Separator } from "@/components/ui/separator";
-import { Subject, Teacher, SchoolClass } from "server/src/db/prisma";
+import { Subject, Teacher } from "server/src/db/prisma";
 import { SeniorHighSectionModel } from "@/models/SeniorHighSectionModel";
 import { FormResult } from "server/src/types/FormResult";
 
@@ -82,82 +74,78 @@ export const ClassScheduleFormDialog = ({
     ClassScheduleFormData | undefined
   >();
 
-  const [subjectsQuery, teachersQuery, shsSctionsQuery] = trpc.useQueries(
-    (t) => [
-      t.subject.getSubjects(undefined, { enabled: false }),
-      t.teacher.getTeachers(undefined, { enabled: false }),
-      t.classSection.getSeniorHighSections(undefined, { enabled: false }),
-    ]
-  );
+  const [
+    { refetch: refetchSubjects },
+    { refetch: refetchTeachers },
+    { refetch: refetchShsSections },
+  ] = trpc.useQueries((t) => [
+    t.subject.getSubjects(undefined, { enabled: false }),
+    t.teacher.getTeachers(undefined, { enabled: false }),
+    t.classSection.getSeniorHighSections(undefined, { enabled: false }),
+  ]);
 
-  const schoolClassQuery = trpc.classSchedule.getClassSchedule.useQuery(
-    schoolClassId ?? 0,
-    {
+  const { refetch: refetchSchoolClasses } =
+    trpc.classSchedule.getClassSchedule.useQuery(schoolClassId ?? 0, {
       staleTime: Infinity,
       enabled: false,
+    });
+
+  const fetchSchoolClassCallback = useCallback(async () => {
+    if (!schoolClass) {
+      const { data: schoolClassData } = await refetchSchoolClasses();
+
+      setSchoolClass(
+        schoolClassData
+          ? {
+              id: Number(schoolClassData.schoolClassId),
+              dayOfWeek: schoolClassData.dayOfWeek,
+              startTime: dayjs.utc(schoolClassData.startTime).format("HH:mm"),
+              endTime: dayjs.utc(schoolClassData.endTime).format("HH:mm"),
+              subjectId: Number(schoolClassData.subjectId),
+              teacherId: Number(schoolClassData.teacherId),
+              sectionId: Number(schoolClassData.sectionId),
+              academicTermId: Number(schoolClassData.academicTermId),
+            }
+          : undefined
+      );
     }
-  );
+  }, [schoolClass, refetchSchoolClasses]);
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data: subjectData } = await subjectsQuery.refetch();
-      const { data: teachersData } = await teachersQuery.refetch();
-      const { data: shsSectionsData } = await shsSctionsQuery.refetch();
+  const fetchDataCallback = useCallback(async () => {
+    const { data: subjectData } = await refetchSubjects();
+    const { data: teachersData } = await refetchTeachers();
+    const { data: shsSectionsData } = await refetchShsSections();
 
-      const mappedShsSections = shsSectionsData?.map((section) => {
-        var model = new SeniorHighSectionModel({
-          classSectionId: Number(section.classSectionId),
-          classSectionName: section.classSection.classSectionName,
-          yearLevelShortName: section.classSection.yearLevel.yearLevelShortName,
-          seniorHighStrandName: section.seniorHighStrand?.seniorHighStrandName,
-          seniorHighTrackName: section.seniorHighTrack.seniorHighTrackName,
-        });
-
-        return model;
+    const mappedShsSections = shsSectionsData?.map((section) => {
+      const model = new SeniorHighSectionModel({
+        classSectionId: Number(section.classSectionId),
+        classSectionName: section.classSection.classSectionName,
+        yearLevelShortName: section.classSection.yearLevel.yearLevelShortName,
+        seniorHighStrandName: section.seniorHighStrand?.seniorHighStrandName,
+        seniorHighTrackName: section.seniorHighTrack.seniorHighTrackName,
       });
 
-      setSelections({
-        subjects: subjectData ?? [],
-        teachers: teachersData ?? [],
-        shsSections: mappedShsSections ?? [],
-      });
-    }
+      return model;
+    });
 
-    if (isDialogOpen) {
-      fetchData();
-    }
-  }, [isDialogOpen]);
+    setSelections({
+      subjects: subjectData ?? [],
+      teachers: teachersData ?? [],
+      shsSections: mappedShsSections ?? [],
+    });
+  }, [refetchSubjects, refetchTeachers, refetchShsSections]);
 
   useEffect(() => {
     if (isDialogOpen) {
-      async function fetchData() {
-        if (!schoolClass) {
-          const { data: schoolClassData } = await schoolClassQuery.refetch();
-
-          setSchoolClass(
-            schoolClassData
-              ? {
-                  id: Number(schoolClassData!.schoolClassId),
-                  dayOfWeek: schoolClassData!.dayOfWeek,
-                  startTime: dayjs
-                    .utc(schoolClassData!.startTime)
-                    .format("HH:mm"),
-                  endTime: dayjs.utc(schoolClassData!.endTime).format("HH:mm"),
-                  subjectId: Number(schoolClassData!.subjectId),
-                  teacherId: Number(schoolClassData!.teacherId),
-                  sectionId: Number(schoolClassData!.sectionId),
-                  academicTermId: Number(schoolClassData!.academicTermId),
-                }
-              : undefined
-          );
-        }
-      }
-
-      if (isDialogOpen) {
-        fetchData();
-      }
+      fetchDataCallback();
     }
-  }, [isDialogOpen, schoolClass]);
+  }, [isDialogOpen, fetchDataCallback]);
+
+  useEffect(() => {
+    if (isDialogOpen) {
+      fetchSchoolClassCallback();
+    }
+  }, [isDialogOpen, fetchSchoolClassCallback]);
 
   return (
     <Popover modal={false} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -304,7 +292,6 @@ export const ClassScheduleForm = ({
                               key={Number(teacher.teacherId)}
                               value={Number(teacher.teacherId).toString()}
                               onSelect={() => {
-                                teacher;
                                 form.setValue(
                                   "teacherId",
                                   Number(teacher.teacherId)

@@ -1,3 +1,7 @@
 node_modules
 
 school.json
+
+.turbo
+build/**
+dist/**

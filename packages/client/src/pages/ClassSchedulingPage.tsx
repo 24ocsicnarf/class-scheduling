@@ -1,9 +1,6 @@
-import {
-  ClassScheduleForm,
-  ClassScheduleFormDialog,
-} from "@/features/class-scheduling/components/ClassScheduleForm";
+import { ClassScheduleFormDialog } from "@/features/class-scheduling/components/ClassScheduleForm";
 import { cn } from "@/lib/utils";
-import { forwardRef, useMemo, useRef } from "react";
+import { forwardRef, useRef } from "react";
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";

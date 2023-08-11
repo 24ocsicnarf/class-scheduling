@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { DevTool } from "@hookform/devtools";
+// import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/trpc";
 import {
@@ -13,17 +12,11 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 
-import { MdCircle, MdOutlineCircle } from "react-icons/md";
-
 import {
   TeacherFormData,
   TeacherFormSchema,
-  TeacherFormObject,
 } from "server/src/zodSchemas/TeacherFormSchema";
 
-import { CirclePicker } from "react-color";
-import { Popover, PopoverTrigger } from "@radix-ui/react-popover";
-import { PopoverContent } from "@/components/ui/popover";
 import { FormResult } from "server/src/types/FormResult";
 import {
   Select,
@@ -34,7 +27,6 @@ import {
 } from "@/components/ui/select";
 import { useFormDialog } from "@/components/hooks/use-form-dialog";
 import { FormDialog, FormContent } from "@/components/form-dialog";
-import { DEFAULT_MAX_INPUT_TEXT_LENGTH } from "@/constants";
 import { Sex } from "@/types/Sex";
 
 export const TeacherForm = ({

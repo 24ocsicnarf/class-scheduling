@@ -20,7 +20,7 @@ export function DataTableToolbar<TData>({
 }: DataTableToolbarProps<TData>) {
   const [query, setQuery] = useState("");
 
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const isFiltered =
     query ||

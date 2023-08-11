@@ -1,6 +1,6 @@
 import { trpc } from "@/trpc";
 import { toast } from "@/components/ui/use-toast";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 
 import {
@@ -20,7 +20,7 @@ import { FormResult } from "server/src/types/FormResult";
 
 import { MasterDataView } from "@/types/master-data";
 
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { FormDialog } from "@/components/form-dialog";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import {

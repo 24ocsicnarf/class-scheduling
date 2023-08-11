@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogTrigger } from "./ui/dialog";
 import { DropdownMenuItem } from "./ui/dropdown-menu";
 
 type DialogItemProps = {

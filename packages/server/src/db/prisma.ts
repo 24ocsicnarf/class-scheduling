@@ -62,12 +62,12 @@ async function connectDb() {
 export default connectDb;
 
 export {
-  SubjectCategory,
-  SchoolClass,
-  Subject,
-  Teacher,
-  YearLevel,
-  SeniorHighTrack,
-  SeniorHighStrand,
-  SeniorHighSection,
+  type SubjectCategory,
+  type SchoolClass,
+  type Subject,
+  type Teacher,
+  type YearLevel,
+  type SeniorHighTrack,
+  type SeniorHighStrand,
+  type SeniorHighSection,
 } from "@prisma/client";

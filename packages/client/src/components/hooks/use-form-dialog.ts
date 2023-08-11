@@ -7,7 +7,7 @@ export const useFormDialog = <TFieldValues extends FieldValues = FieldValues>(
 ) => {
   const setFormError = (
     error: TRPCClientErrorLike<AppRouter>,
-    variables: {}
+    variables: object
   ) => {
     if (error.data?.zodError) {
       const { zodError } = error.data;

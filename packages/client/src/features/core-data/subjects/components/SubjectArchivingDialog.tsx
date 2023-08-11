@@ -1,19 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { DialogFooter, DialogHeader } from "@/components/ui/dialog";
-import {
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { trpc } from "@/trpc";
 import { SubjectColumn } from "./table/subject-table-columns";
 import { FormResult } from "server/src/types/FormResult";
 import { ArchiveAction } from "@/types/master-data";
-import { useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogCancel,
