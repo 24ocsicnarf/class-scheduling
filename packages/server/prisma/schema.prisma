@@ -10,121 +10,122 @@ datasource db {
 }
 
 model AcademicTerm {
-  academicTermId BigInt     @id @default(autoincrement()) @map("academic_term_id")
-  startOn        DateTime   @map("start_on") @db.Date
-  endOn          DateTime?  @map("end_on") @db.Date
-  schoolYearId   BigInt     @map("school_year_id")
-  number         Int
-  schoolYear     SchoolYear @relation(fields: [schoolYearId], references: [schoolYearId], onDelete: NoAction, onUpdate: NoAction)
+  academicTermId BigInt        @id @default(autoincrement()) @map("academic_term_id")
+  startOn        DateTime      @map("start_on") @db.Date
+  endOn          DateTime?     @map("end_on") @db.Date
+  schoolYearId   BigInt        @map("school_year_id")
+  termNumber     Int           @map("term_number")
+  schoolYear     SchoolYear    @relation(fields: [schoolYearId], references: [schoolYearId], onDelete: NoAction, onUpdate: NoAction)
+  schoolClasses  SchoolClass[]
 
   @@map("academic_term")
   @@schema("public")
 }
 
 model SchoolClass {
-  schoolClassId BigInt   @id @default(autoincrement()) @map("school_class_id")
-  startTime     DateTime @map("start_time") @db.Time(6)
-  endTime       DateTime @map("end_time") @db.Time(6)
-  dayOfWeek     Int      @map("day_of_week")
-  teacherId     BigInt   @map("teacher_id")
-  subjectId     BigInt   @map("subject_id")
-  sectionId     BigInt   @map("section_id")
-  name          String
-  section       Section  @relation(fields: [sectionId], references: [sectionId], onDelete: NoAction, onUpdate: NoAction)
-  subject       Subject  @relation(fields: [subjectId], references: [subjectId], onDelete: NoAction, onUpdate: NoAction)
-  teacher       Teacher  @relation(fields: [teacherId], references: [teacherId], onDelete: NoAction, onUpdate: NoAction)
+  schoolClassId  BigInt       @id @default(autoincrement()) @map("school_class_id")
+  startTime      DateTime     @map("start_time") @db.Time(6)
+  endTime        DateTime     @map("end_time") @db.Time(6)
+  dayOfWeek      Int          @map("day_of_week")
+  teacherId      BigInt       @map("teacher_id")
+  subjectId      BigInt       @map("subject_id")
+  sectionId      BigInt       @map("section_id")
+  className      String?      @map("class_name")
+  academicTermId BigInt       @map("academic_term_id")
+  academicTerm   AcademicTerm @relation(fields: [academicTermId], references: [academicTermId], onDelete: NoAction, onUpdate: NoAction)
+  section        ClassSection @relation(fields: [sectionId], references: [classSectionId], onDelete: NoAction, onUpdate: NoAction)
+  subject        Subject      @relation(fields: [subjectId], references: [subjectId], onDelete: NoAction, onUpdate: NoAction)
+  teacher        Teacher      @relation(fields: [teacherId], references: [teacherId], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([startTime, dayOfWeek, teacherId, subjectId, sectionId, name, endTime], map: "school_class_start_time_day_of_week_teacher_id_subject_id_secti")
+  @@unique([startTime, dayOfWeek, teacherId, subjectId, sectionId, className, endTime], map: "school_class_start_time_day_of_week_teacher_id_subject_id_secti")
   @@map("school_class")
   @@schema("public")
 }
 
 model SchoolYear {
-  schoolYearId  BigInt         @id @default(autoincrement()) @map("school_year_id")
-  name          String
-  openOn        DateTime?      @map("open_on") @db.Date
-  closeOn       DateTime?      @map("close_on") @db.Date
-  academicTerms AcademicTerm[]
+  schoolYearId      BigInt         @id @default(autoincrement()) @map("school_year_id")
+  schoolYearName    String         @map("school_year_name")
+  openOn            DateTime?      @map("open_on") @db.Date
+  closeOn           DateTime?      @map("close_on") @db.Date
+  academicTermCount Int            @map("academic_term_count")
+  academicTerms     AcademicTerm[]
 
   @@map("school_year")
   @@schema("public")
 }
 
-model Section {
-  sectionId         BigInt             @id @default(autoincrement()) @map("section_id")
-  name              String
-  yearLevelId       BigInt             @map("year_level_id")
-  schoolClasses     SchoolClass[]
-  yearLevel         YearLevel          @relation(fields: [yearLevelId], references: [yearLevelId], onDelete: NoAction, onUpdate: NoAction)
-  seniorHighSection SeniorHighSection?
-
-  @@unique([yearLevelId, name])
-  @@map("section")
-  @@schema("public")
-}
-
 model SeniorHighSection {
-  sectionId          BigInt  @id @map("section_id")
-  seniorHighStrandId BigInt? @map("senior_high_strand_id")
-  seniorHighTrackId  BigInt  @map("senior_high_track_id")
-  section            Section @relation(fields: [sectionId], references: [sectionId], onDelete: NoAction, onUpdate: NoAction)
+  classSectionId     BigInt            @id @map("class_section_id")
+  seniorHighStrandId BigInt?           @map("senior_high_strand_id")
+  seniorHighTrackId  BigInt            @map("senior_high_track_id")
+  classSection       ClassSection      @relation(fields: [classSectionId], references: [classSectionId], onDelete: NoAction, onUpdate: NoAction, map: "senior_high_section_section_id_fkey")
+  seniorHighStrand   SeniorHighStrand? @relation(fields: [seniorHighStrandId], references: [seniorHighStrandId], onDelete: NoAction, onUpdate: NoAction)
+  seniorHighTrack    SeniorHighTrack   @relation(fields: [seniorHighTrackId], references: [seniorHighTrackId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("senior_high_section")
   @@schema("public")
 }
 
 model SeniorHighStrand {
-  seniorHighStrandId BigInt @id @default(autoincrement()) @map("senior_high_strand_id")
-  name               String
-  description        String
+  seniorHighStrandId   BigInt              @id @default(autoincrement()) @map("senior_high_strand_id")
+  seniorHighStrandName String              @map("senior_high_strand_name")
+  description          String
+  seniorHighTrackId    BigInt?             @map("senior_high_track_id")
+  seniorHighSections   SeniorHighSection[]
+  seniorHighTrack      SeniorHighTrack?    @relation(fields: [seniorHighTrackId], references: [seniorHighTrackId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("senior_high_strand")
   @@schema("public")
 }
 
 model SeniorHighTrack {
-  seniorHighTrackId BigInt @id @default(autoincrement()) @map("senior_high_track_id")
-  name              String @unique
-  description       String
+  seniorHighTrackId   BigInt              @id @default(autoincrement()) @map("senior_high_track_id")
+  seniorHighTrackName String              @unique(map: "senior_high_track_name_key") @map("senior_high_track_name")
+  description         String?
+  seniorHighSections  SeniorHighSection[]
+  seniorHighStrands   SeniorHighStrand[]
 
   @@map("senior_high_track")
   @@schema("public")
 }
 
 model Subject {
-  subjectId     BigInt        @id @default(autoincrement()) @map("subject_id")
-  name          String
-  commonName    String        @map("common_name")
-  colorHex      String        @map("color_hex")
-  isArchived    Boolean       @map("is_archived")
-  schoolClasses SchoolClass[]
+  subjectId         BigInt          @id @default(autoincrement()) @map("subject_id")
+  subjectName       String          @map("subject_name")
+  subjectShortName  String          @map("subject_short_name")
+  colorHex          String          @map("color_hex")
+  isArchived        Boolean         @map("is_archived")
+  subjectCategoryId BigInt          @map("subject_category_id")
+  schoolClasses     SchoolClass[]
+  subjectCategory   SubjectCategory @relation(fields: [subjectCategoryId], references: [subjectCategoryId], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("subject")
   @@schema("public")
 }
 
 model Teacher {
-  teacherId     BigInt        @id @default(autoincrement()) @map("teacher_id")
-  firstName     String        @map("first_name")
-  middleName    String        @map("middle_name")
-  lastName      String        @map("last_name")
-  suffix        String
-  nickname      String
-  sex           Int
-  isArchived    Boolean       @map("is_archived")
-  schoolClasses SchoolClass[]
+  teacherId      BigInt        @id @default(autoincrement()) @map("teacher_id")
+  firstName      String        @map("first_name")
+  middleName     String?       @map("middle_name")
+  lastName       String        @map("last_name")
+  nameSuffix     String?       @map("name_suffix")
+  nickname       String
+  sex            Int
+  isArchived     Boolean       @default(false) @map("is_archived")
+  shortHonorific String?       @map("short_honorific")
+  schoolClasses  SchoolClass[]
 
   @@map("teacher")
   @@schema("public")
 }
 
 model YearLevel {
-  yearLevelId BigInt    @id @default(autoincrement()) @map("year_level_id")
-  name        String    @unique
-  shortName   String    @unique @map("short_name")
-  sortOrder   BigInt    @default(autoincrement()) @map("sort_order")
-  isArchived  Boolean   @map("is_archived")
-  sections    Section[]
+  yearLevelId        BigInt         @id @default(autoincrement()) @map("year_level_id")
+  yearLevelName      String         @unique(map: "year_level_name_key") @map("year_level_name")
+  yearLevelShortName String         @unique(map: "year_level_short_name_key") @map("year_level_short_name")
+  sortOrder          BigInt         @default(autoincrement()) @map("sort_order")
+  isArchived         Boolean        @default(false) @map("is_archived")
+  classSections      ClassSection[]
 
   @@map("year_level")
   @@schema("public")
@@ -132,7 +133,7 @@ model YearLevel {
 
 model AppPermission {
   appPermissionId    BigInt              @id @default(autoincrement()) @map("app_permission_id")
-  name               String              @unique
+  appPermissionName  String              @unique(map: "app_permission_name_key") @map("app_permission_name")
   appRolePermissions AppRolePermission[]
 
   @@map("app_permission")
@@ -141,7 +142,7 @@ model AppPermission {
 
 model AppRole {
   appRoleId          Int                 @id @map("app_role_id")
-  name               String              @unique
+  appRoleName        String              @unique(map: "app_role_name_key") @map("app_role_name")
   appRolePermissions AppRolePermission[]
   appUserRoles       AppUserRole[]
 
@@ -166,6 +167,7 @@ model AppUser {
   username     String        @unique
   passwordHash String        @map("password_hash")
   userStatus   String        @default("active") @map("user_status")
+  isDefault    Boolean       @default(false) @map("is_default")
   appUserRoles AppUserRole[]
 
   @@map("app_user")
@@ -182,4 +184,25 @@ model AppUserRole {
   @@unique([appUserId, appRoleId])
   @@map("app_user_role")
   @@schema("auth")
+}
+
+model SubjectCategory {
+  subjectCategoryId   BigInt    @id @default(autoincrement()) @map("subject_category_id")
+  subjectCategoryName String    @map("subject_category_name")
+  subjects            Subject[]
+
+  @@map("subject_category")
+  @@schema("public")
+}
+
+model ClassSection {
+  classSectionId    BigInt             @id @default(autoincrement()) @map("class_section_id")
+  classSectionName  String             @map("class_section_name")
+  yearLevelId       BigInt             @map("year_level_id")
+  yearLevel         YearLevel          @relation(fields: [yearLevelId], references: [yearLevelId], onDelete: NoAction, onUpdate: NoAction)
+  schoolClasses     SchoolClass[]
+  seniorHighSection SeniorHighSection?
+
+  @@map("class_section")
+  @@schema("public")
 }

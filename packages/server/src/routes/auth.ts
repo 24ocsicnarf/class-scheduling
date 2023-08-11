@@ -2,14 +2,17 @@ import { publicProcedure, protectedProcedure, router } from "../trpc";
 import { UserStatus } from "./../types/UserStatus";
 import * as trpc from "@trpc/server";
 import bcrypt from "bcrypt";
-import { LoginFormSchema } from "../zodSchemas/LoginFormSchema";
-import { UserFormSchema } from "../zodSchemas/UserFormSchema";
+import {
+  UserFormSchema,
+  LoginFormSchema,
+  LoggedUserPasswordFormSchema,
+} from "../zodSchemas";
+import {} from "../zodSchemas";
 import { AppUser } from "@prisma/client";
 import serverConfig from "../config/serverConfig";
 import * as jwt from "jsonwebtoken";
 import { addSeconds } from "date-fns";
-import { LoggedUserPasswordFormSchema } from "../zodSchemas/LoggedUserPasswordFormSchema";
-import { z } from "zod";
+import { ZodError, ZodIssue, z } from "zod";
 
 export const authRouter = router({
   logIn: publicProcedure
@@ -66,34 +69,46 @@ export const authRouter = router({
   }),
 
   verify: protectedProcedure.query(({ ctx }) => {
-    console.log("ctx.userId", ctx.userId);
-    return ctx.userId;
+    return { userId: ctx.userId, username: ctx.username };
   }),
 
-  getAllUsers: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.appUser.findMany();
-  }),
+  getUsers: protectedProcedure
+    .input(z.nativeEnum(UserStatus))
+    .query(async ({ input, ctx }) => {
+      const userRole = await ctx.prisma.appUserRole.findFirst({
+        where: {
+          appUserId: BigInt(ctx.userId),
+        },
+      });
 
-  getActiveUsers: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.appUser.findMany({
-      where: {
-        userStatus: UserStatus.active,
-      },
-      include: {
-        appUserRoles: {
-          include: {
-            appRole: {
-              select: {
-                name: true,
+      return await ctx.prisma.appUser.findMany({
+        where: {
+          userStatus: input,
+          isDefault: false,
+          appUserRoles:
+            userRole?.appRoleId == 1
+              ? undefined
+              : {
+                  none: {
+                    appRoleId: 1,
+                  },
+                },
+        },
+        include: {
+          appUserRoles: {
+            select: {
+              appRole: {
+                select: {
+                  appRoleName: true,
+                },
               },
             },
           },
         },
-      },
-    });
-  }),
+      });
+    }),
 
-  getUserRoles: protectedProcedure.query(async ({ ctx }) => {
+  getAppRoles: protectedProcedure.query(async ({ ctx }) => {
     const userRole = await ctx.prisma.appUserRole.findFirst({
       where: {
         appUserId: BigInt(ctx.userId),
@@ -118,6 +133,8 @@ export const authRouter = router({
     .mutation(async ({ input, ctx }) => {
       const cleanUsername = input.username.trim();
 
+      var errors: ZodIssue[] = [];
+
       const existingUser = await ctx.prisma.appUser.findFirst({
         where: {
           username: cleanUsername,
@@ -125,10 +142,15 @@ export const authRouter = router({
       });
 
       if (existingUser) {
-        throw new trpc.TRPCError({
-          code: "CONFLICT",
-          message: "User already exists",
+        errors.push({
+          code: "custom",
+          path: ["username"],
+          message: "Username already exists",
         });
+      }
+
+      if (errors.length > 0) {
+        throw new ZodError(errors);
       }
 
       const hashedPassword = await hashPassword(input.password);
@@ -136,6 +158,11 @@ export const authRouter = router({
         data: {
           username: cleanUsername,
           passwordHash: hashedPassword,
+          appUserRoles: {
+            create: {
+              appRoleId: input.roleId,
+            },
+          },
         },
       });
 
@@ -185,40 +212,129 @@ export const authRouter = router({
       };
     }),
 
-  deactivateUser: protectedProcedure
-    .input(z.string())
+  deactivateUsers: protectedProcedure
+    .input(z.array(z.number()))
     .mutation(async ({ input, ctx }) => {
-      const deactivatingUserId = BigInt(input);
-      const deactivatingUser = await ctx.prisma.appUser.findFirst({
+      const deactivatingUserIds = input.map((id) => BigInt(id));
+      const existingUsersCount = await ctx.prisma.appUser.count({
         where: {
-          appUserId: deactivatingUserId,
+          appUserId: { in: deactivatingUserIds },
         },
       });
 
-      if (!deactivatingUser) {
+      if (existingUsersCount == 0) {
         throw new trpc.TRPCError({
           code: "CONFLICT",
-          message: "Deactivating user doesn't exist",
+          message: "Users don't exist",
         });
       }
 
-      await ctx.prisma.appUser.update({
+      const result = await ctx.prisma.appUser.updateMany({
         where: {
-          appUserId: deactivatingUserId,
+          appUserId: { in: deactivatingUserIds },
+          isDefault: false,
         },
         data: {
           userStatus: UserStatus.inactive,
         },
       });
 
+      var message = "";
+      if (existingUsersCount == 1) {
+        const existingUser = await ctx.prisma.appUser.findFirst({
+          where: {
+            appUserId: deactivatingUserIds[0],
+          },
+        });
+
+        if (!existingUser) {
+          throw new trpc.TRPCError({
+            code: "CONFLICT",
+            message: "User does not exist",
+          });
+        }
+
+        message = `'${existingUser.username}' deactivated :(`;
+      } else {
+        message =
+          existingUsersCount == deactivatingUserIds.length
+            ? `All selected ${existingUsersCount} users deactivated :(`
+            : `${result.count} users deactivated :( (${
+                deactivatingUserIds.length - result.count
+              } users cannot be deactivated)`;
+      }
+
       return {
         status: 200,
-        message: `'${deactivatingUser.username}' deactivated :(`,
+        message,
+      };
+    }),
+
+  reactivateUsers: protectedProcedure
+    .input(z.array(z.number()))
+    .mutation(async ({ input, ctx }) => {
+      const reactivatingUserIds = input.map((id) => BigInt(id));
+
+      const existingUsersCount = await ctx.prisma.appUser.count({
+        where: {
+          appUserId: { in: reactivatingUserIds },
+        },
+      });
+
+      if (existingUsersCount == 0) {
+        throw new trpc.TRPCError({
+          code: "CONFLICT",
+          message: "Reactivating users don't exist",
+        });
+      }
+
+      const result = await ctx.prisma.appUser.updateMany({
+        where: {
+          appUserId: { in: reactivatingUserIds },
+        },
+        data: {
+          userStatus: UserStatus.active,
+        },
+      });
+
+      var title = "";
+      var message = "";
+      if (existingUsersCount == 1) {
+        const existingUser = await ctx.prisma.appUser.findFirst({
+          where: {
+            appUserId: reactivatingUserIds[0],
+          },
+        });
+
+        if (!existingUser) {
+          throw new trpc.TRPCError({
+            code: "CONFLICT",
+            message: "User does not exist",
+          });
+        }
+
+        title = `'${existingUser.username}' reactivated :D`;
+      } else {
+        title =
+          existingUsersCount == reactivatingUserIds.length
+            ? `All selected ${existingUsersCount} users reactivated :D`
+            : `${result.count} users reactivated :)`;
+        if (reactivatingUserIds.length != result.count) {
+          message = `${
+            reactivatingUserIds.length - result.count
+          } users cannot be reactivated)`;
+        }
+      }
+
+      return {
+        status: 200,
+        title,
+        message,
       };
     }),
 });
 
-async function hashPassword(password: string) {
+export async function hashPassword(password: string) {
   const saltRounds = 12;
   return await bcrypt.hash(password, saltRounds);
 }
@@ -231,6 +347,7 @@ function generateAccessToken(user: AppUser) {
   return jwt.sign(
     {
       userId: user.appUserId,
+      username: user.username,
     },
     serverConfig.secretKey,
     {

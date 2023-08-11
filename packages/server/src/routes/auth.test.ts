@@ -121,6 +121,7 @@ describe("addUser mutation", () => {
         caller.auth.addUser({
           username: "",
           password: "sobrang$ecur3dngPa$$w0rdn@!+0h3h3",
+          roleId: 1,
         })
       ).rejects.toThrowError("is required");
     });
@@ -130,6 +131,7 @@ describe("addUser mutation", () => {
         caller.auth.addUser({
           username: "     ",
           password: "sobrang$ecur3dngPa$$w0rdn@!+0h3h3",
+          roleId: 1,
         })
       ).rejects.toThrowError("must contain");
     });
@@ -139,6 +141,7 @@ describe("addUser mutation", () => {
         caller.auth.addUser({
           username: "_user",
           password: "sobrang$ecur3dngPa$$w0rdn@!+0h3h3",
+          roleId: 1,
         })
       ).rejects.toThrowError("must start with");
 
@@ -146,6 +149,7 @@ describe("addUser mutation", () => {
         caller.auth.addUser({
           username: "-user",
           password: "sobrang$ecur3dngPa$$w0rdn@!+0h3h3",
+          roleId: 1,
         })
       ).rejects.toThrowError("must start with");
 
@@ -153,6 +157,7 @@ describe("addUser mutation", () => {
         caller.auth.addUser({
           username: "?!user",
           password: "sobrang$ecur3dngPa$$w0rdn@!+0h3h3",
+          roleId: 1,
         })
       ).rejects.toThrowError("must start with");
 
@@ -160,6 +165,7 @@ describe("addUser mutation", () => {
         caller.auth.addUser({
           username: "      user",
           password: "sobrang$ecur3dngPa$$w0rdn@!+0h3h3",
+          roleId: 1,
         })
       ).rejects.toThrowError("must start with");
     });
@@ -169,6 +175,7 @@ describe("addUser mutation", () => {
         caller.auth.addUser({
           username: "user!!!",
           password: "sobrang$ecur3dngPa$$w0rdn@!+0h3h3",
+          roleId: 1,
         })
       ).rejects.toThrowError("must only contain");
     });
@@ -177,6 +184,7 @@ describe("addUser mutation", () => {
       const input = {
         username: "superuser",
         password: "1234567890",
+        roleId: 1,
       };
 
       prismaMock.appUser.findFirst.mockImplementation(prisma.appUser.findFirst);
@@ -194,6 +202,7 @@ describe("addUser mutation", () => {
         await caller.auth.addUser({
           username: "sampleUser",
           password: "",
+          roleId: 1,
         });
       } catch (error) {
         if (error instanceof TRPCError) {
@@ -207,6 +216,7 @@ describe("addUser mutation", () => {
         await caller.auth.addUser({
           username: "sampleUser",
           password: "yeah",
+          roleId: 1,
         });
       } catch (error) {
         if (error instanceof TRPCError) {
@@ -220,6 +230,7 @@ describe("addUser mutation", () => {
     const input = {
       username: "newUser",
       password: "newUser123",
+      roleId: 1,
     };
 
     prismaMock.appUser.findFirst.mockImplementation(prisma.appUser.findFirst);

@@ -6,19 +6,13 @@ import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
 
 import serverConfig from "./config/serverConfig";
-import { createContext } from "./trpc";
+import { createContext } from "./t";
 import connectDb from "./db/prisma";
 import { appRouter } from "./routes";
 
-import cookieParser from "cookie-parser";
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 dotenv.config({ path: path.join(__dirname, "./.env") });
-
-export type AppRouter = typeof appRouter;
-
-export type RouterInput = inferRouterInputs<AppRouter>;
-export type RouterOutput = inferRouterOutputs<AppRouter>;
 
 const app = express();
 
@@ -47,3 +41,7 @@ app.listen(port, () => {
 
   connectDb();
 });
+
+export type AppRouter = typeof appRouter;
+export type RouterInput = inferRouterInputs<AppRouter>;
+export type RouterOutput = inferRouterOutputs<AppRouter>;

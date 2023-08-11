@@ -17,6 +17,13 @@ import {
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
+  // onPageChanged?: ({
+  //   pageNumber,
+  //   limit,
+  // }: {
+  //   pageNumber: Number;
+  //   limit: Number;
+  // }) => void;
 }
 
 export function DataTablePagination<TData>({

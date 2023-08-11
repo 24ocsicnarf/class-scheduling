@@ -5,5 +5,5 @@ const schema = z.object({
   password: z.string(),
 });
 
-export const LoginFormSchema: ZodType<LoginFormData> = schema;
 export type LoginFormData = TypeOf<typeof schema>;
+export const LoginFormSchema: ZodType<LoginFormData> = schema;

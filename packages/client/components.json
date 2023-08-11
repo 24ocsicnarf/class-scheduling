@@ -4,9 +4,9 @@
   "rsc": false,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.js",
-    "css": "src/global.css",
-    "baseColor": "stone",
+    "config": "shadcn.config.js",
+    "css": "src/shadcn.css",
+    "baseColor": "slate",
     "cssVariables": true
   },
   "aliases": {

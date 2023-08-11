@@ -7,9 +7,9 @@ import MainLayout from "./layouts/MainLayout";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import { mainMenus } from "./layouts/MainMenus";
+import { sidebarMenus } from "./layouts/MainMenus";
 import { useState } from "react";
-import RequireAuth from "./features/auth/RequireAuth.tsx";
+import RequireAuth from "@/features/auth/RequireAuth.tsx";
 import { Maybe } from "@trpc/server";
 import { AppRouter } from "server";
 
@@ -21,7 +21,8 @@ function App() {
       code === "BAD_REQUEST" ||
       code === "FORBIDDEN" ||
       code === "UNAUTHORIZED" ||
-      code === "CONFLICT"
+      code === "CONFLICT" ||
+      error?.data?.zodError
     ) {
       return false;
     }
@@ -35,7 +36,7 @@ function App() {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 10 * 1000,
+            staleTime: 1000 * 1 /* seconds */,
             retry: queryClientRetry,
           },
           mutations: {
@@ -70,11 +71,13 @@ function App() {
             {/* Private routes */}
             <Route element={<RequireAuth />}>
               <Route element={<MainLayout />}>
-                {mainMenus.map((menu, index) => {
-                  return (
-                    <Route key={index} path={menu.path} element={menu.page} />
-                  );
-                })}
+                {sidebarMenus
+                  .flatMap((s) => s.menus)
+                  .map((menu, index) => {
+                    return (
+                      <Route key={index} path={menu.path} element={menu.page} />
+                    );
+                  })}
               </Route>
             </Route>
             {/* Public routes */}

@@ -1,12 +1,3 @@
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
 import { DevTool } from "@hookform/devtools";
@@ -37,38 +28,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs";
-import { MdPersonAdd } from "react-icons/md";
+import { PasswordInput } from "@/components/password-input";
 
-export type UserChangedEvent = (data: {
-  message: string;
-  status: number;
-}) => void;
+import { FormContent } from "@/components/form-dialog";
+import { FormResult } from "server/src/types/FormResult";
+import { useFormDialog } from "@/components/hooks/use-form-dialog";
+import { UserStatus } from "server/src/types/UserStatus";
 
-type UserFormEvent = {
-  onUserChanged: UserChangedEvent;
-};
+export const UserForm = ({
+  roles,
+  onSaved,
+  onCancel,
+}: {
+  roles: { appRoleId: number; appRoleName: string }[];
+  onSaved: (data: FormResult) => void;
+  onCancel?: () => void;
+}) => {
+  const form = useForm<UserFormData>({
+    resolver: zodResolver(UserFormSchema),
+  });
 
-export const UserForm = ({ onUserChanged }: UserFormEvent) => {
-  const [open, setOpen] = useState(false);
-  const [passwordShown, setPasswordShown] = useState(false);
+  const [setError] = useFormDialog(form);
+
+  const trpcUtils = trpc.useContext();
 
   const { mutate: addUser } = trpc.auth.addUser.useMutation({
     onSuccess(data) {
-      toggleForm(false);
-      onUserChanged(data);
-    },
-    onError(error) {
-      alert(error.message);
-    },
-  });
+      trpcUtils.auth.getUsers.invalidate(UserStatus.active);
 
-  const form = useForm<UserFormData>({
-    resolver: zodResolver(UserFormSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      roleId: "",
+      onSaved(data);
+      form.reset();
+    },
+    onError(error, variables) {
+      setError(error, variables);
     },
   });
 
@@ -76,114 +68,73 @@ export const UserForm = ({ onUserChanged }: UserFormEvent) => {
     addUser(data);
   };
 
-  const toggleForm = (open: boolean) => {
-    if (!open) {
-      form.reset();
-    }
-    setOpen(open);
-  };
-
   return (
     <>
-      <Dialog open={open} onOpenChange={toggleForm}>
-        <DialogTrigger asChild>
-          <Button variant="default" className="flex flex-row gap-2">
-            <MdPersonAdd />
-            <span>Add user</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <DialogHeader className="pb-4">
-                <DialogTitle>Add user</DialogTitle>
-              </DialogHeader>
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem className="pb-4">
-                    <FormLabel>Username</FormLabel>
+      <FormContent form={form} onSubmit={onSubmit} onCancel={onCancel}>
+        <fieldset
+          className="group space-y-6"
+          disabled={form.formState.isSubmitting}
+        >
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem className="">
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <div>
+                <FormItem className="">
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </div>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="roleId"
+            render={({ field }) => {
+              return (
+                <FormItem className="">
+                  <FormLabel>Role</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(Number(value))}
+                    defaultValue={field.value?.toString()}
+                  >
                     <FormControl>
-                      <Input {...field} />
+                      <SelectTrigger>
+                        <SelectValue placeholder="" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <div>
-                    <FormItem className="pb-4">
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <div className="flex w-full max-w-sm items-center space-x-2">
-                          <Input
-                            {...field}
-                            type={passwordShown ? "text" : "password"}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={() => {
-                              setPasswordShown(!passwordShown);
-                            }}
-                          >
-                            {passwordShown ? (
-                              <BsFillEyeSlashFill />
-                            ) : (
-                              <BsFillEyeFill />
-                            )}
-                          </Button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </div>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="roleId"
-                render={({ field }) => {
-                  const { data, isLoading, error } =
-                    trpc.auth.getUserRoles.useQuery();
-
-                  return (
-                    <FormItem className="pb-4">
-                      <FormLabel>Role</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a role" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {data?.map((role) => (
-                            <SelectItem value={role.appRoleId.toString()}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-              <DialogFooter>
-                <Button type="submit">Save</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-      <DevTool control={form.control} />
+                    <SelectContent>
+                      {roles?.map((role) => (
+                        <SelectItem value={role.appRoleId.toString()}>
+                          {role.appRoleName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+        </fieldset>
+      </FormContent>
+      {/* <DevTool control={form.control} /> */}
     </>
   );
 };

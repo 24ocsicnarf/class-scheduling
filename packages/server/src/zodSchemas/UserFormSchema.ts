@@ -5,8 +5,7 @@ export const UserPasswordSchema = z
   .min(8, "Password should have at least 8 characters");
 
 const schema = z.object({
-  roleId: z.string(),
-  username: z.string().superRefine(async (val, ctx) => {
+  username: z.string().superRefine((val, ctx) => {
     if (val.length == 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
@@ -44,13 +43,14 @@ const schema = z.object({
         code: z.ZodIssueCode.invalid_string,
         validation: "regex",
         message:
-          "Username must only contain a letter, number, hyphen or underscore",
+          "Username must only contain a letter, number, dash (-) or underscore (_)",
         fatal: true,
       });
       return z.NEVER;
     }
   }),
   password: UserPasswordSchema,
+  roleId: z.number(),
 });
 
 export type UserPasswordData = TypeOf<typeof UserPasswordSchema>;

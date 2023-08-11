@@ -1,7 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { trpc } from "@/trpc";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import { useAuthStore } from "@/store/authStore";
 
 const Navbar = () => {
+  const currentUser = useAuthStore((state) => state.currentUser);
+
   const navigate = useNavigate();
 
   const { mutate: logOut } = trpc.auth.logOut.useMutation({
@@ -9,25 +22,30 @@ const Navbar = () => {
       navigate("/login");
     },
     onError() {
-      alert(
-        "Error logging out... 'di ka na makakalabas no escape dito ka na habambuhay akin ka lang oliver HAHHAHHHAHA"
-      );
+      alert("Error logging out...");
     },
   });
 
   return (
-    <div className="sticky top-0 h-20 p-4 shadow bg-white flex justify-between items-center z-10">
+    <div className="h-20 p-4 z-10 drop-shadow-sm bg-background flex justify-between items-center">
       <div></div>
-      <ul className="items-end flex gap-4">
-        <li>
-          <a>hihi</a>
-        </li>
-        <li>
-          <button type="button" onClick={() => logOut()}>
-            Log out
-          </button>
-        </li>
-      </ul>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="flex gap-4">
+            {currentUser?.username}
+            <Avatar>
+              <AvatarFallback>
+                {currentUser?.username.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          {/* <DropdownMenuLabel>LNHS</DropdownMenuLabel>
+          <DropdownMenuSeparator /> */}
+          <DropdownMenuItem onClick={() => logOut()}>Log out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

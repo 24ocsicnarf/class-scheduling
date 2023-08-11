@@ -7,6 +7,42 @@ declare global {
 export const prisma =
   global.prisma || new PrismaClient({ log: ["query", "info"] });
 
+prisma.$extends({
+  result: {
+    teacher: {
+      fullName: {
+        needs: {
+          firstName: true,
+          middleName: true,
+          lastName: true,
+          nameSuffix: true,
+        },
+        compute(teacher) {
+          return [
+            teacher.firstName,
+            teacher.middleName,
+            teacher.lastName,
+            teacher.nameSuffix,
+          ]
+            .filter(Boolean)
+            .join(" ");
+        },
+      },
+      aka: {
+        needs: {
+          shortHonorific: true,
+          nickname: true,
+        },
+        compute(teacher) {
+          return [teacher.shortHonorific, teacher.nickname]
+            .filter(Boolean)
+            .join(" ");
+        },
+      },
+    },
+  },
+});
+
 if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;
 }
@@ -14,7 +50,7 @@ if (process.env.NODE_ENV !== "production") {
 async function connectDb() {
   try {
     await prisma.$connect();
-    console.log("? Database connected successfully");
+    console.log(">>> Database connected successfully");
   } catch (error) {
     console.log(error);
     process.exit(1);
@@ -24,3 +60,14 @@ async function connectDb() {
 }
 
 export default connectDb;
+
+export {
+  SubjectCategory,
+  SchoolClass,
+  Subject,
+  Teacher,
+  YearLevel,
+  SeniorHighTrack,
+  SeniorHighStrand,
+  SeniorHighSection,
+} from "@prisma/client";

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/password-input";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -32,7 +33,10 @@ export const LoginForm = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-12">
+      <h1 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 text-center">
+        Class Scheduling System
+      </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="flex flex-col">
           <label
@@ -41,7 +45,7 @@ export const LoginForm = () => {
           >
             Username
           </label>
-          <Input {...register("username")} placeholder="Enter username" />
+          <Input {...register("username")} />
         </div>
         <div className="flex flex-col">
           <label
@@ -50,17 +54,13 @@ export const LoginForm = () => {
           >
             Password
           </label>
-          <Input
-            type="password"
-            {...register("password")}
-            placeholder="Enter password"
-          />
+          <PasswordInput {...register("password")} />
         </div>
         <div className="flex flex-col justify-stretch">
           <Button type="submit">Log in</Button>
         </div>
       </form>
       <DevTool control={control} />
-    </>
+    </div>
   );
 };

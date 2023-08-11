@@ -1,4 +1,4 @@
-import "./global.css";
+import "./shadcn.css";
 import "./index.css";
 
 import App from "./App.tsx";

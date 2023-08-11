@@ -6,6 +6,8 @@ import {
   getPaginationRowModel,
   getFilteredRowModel,
   useReactTable,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
 } from "@tanstack/react-table";
 
 import {
@@ -17,27 +19,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import React from "react";
-import { Input } from "@/components/ui/input";
-import { UserChangedEvent, UserForm } from "./UserForm";
-import { DataTablePagination } from "@/components/ui/data-table-pagination";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+import { DataTableToolbar } from "./data-table-toolbar";
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData, TValue, TView> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  onUserChanged: UserChangedEvent;
+  view: TView;
+  searchPlaceholder?: string;
+  facetedFilterColumns?: { columnId: string; title: string; data: string[] }[];
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData, TValue, TView>({
   columns,
   data,
-  onUserChanged,
-}: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [rowSelection, setRowSelection] = React.useState({});
+  view,
+  searchPlaceholder,
+  facetedFilterColumns,
+}: DataTableProps<TData, TValue, TView>) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data,
@@ -46,34 +48,28 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     onRowSelectionChange: setRowSelection,
     state: {
-      columnFilters,
       rowSelection,
+      columnFilters,
     },
   });
 
+  useEffect(() => {
+    table.resetRowSelection();
+    table.resetColumnFilters();
+  }, [view, data]);
+
   return (
-    <div>
-      <div className="flex justify-between py-4">
-        <div>
-          <Input
-            placeholder="Filter by username..."
-            value={
-              (table.getColumn("username")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn("username")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        </div>
-        <Button
-          variant="outline"
-          disabled={Object.entries(rowSelection).length == 0}
-        >
-          Deactivate
-        </Button>
+    <div className="space-y-3">
+      <div className="flex justify-between gap-2">
+        <DataTableToolbar
+          table={table}
+          searchPlaceholder={searchPlaceholder}
+          facetedFilterColumns={facetedFilterColumns}
+        />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -125,8 +121,10 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="pt-3">
-        <DataTablePagination table={table} />
+      <div className="flex items-center">
+        <div className="flex-grow">
+          <DataTablePagination table={table} />
+        </div>
       </div>
     </div>
   );
