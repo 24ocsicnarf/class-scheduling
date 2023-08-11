@@ -11,7 +11,7 @@ async function createRoles() {
   const superuser = await prisma.appRole.create({
     data: {
       appRoleId: 1,
-      name: "superuser",
+      appRoleName: "superuser",
     },
   });
   console.log("role", superuser);
@@ -19,7 +19,7 @@ async function createRoles() {
   const admin = await prisma.appRole.create({
     data: {
       appRoleId: 2,
-      name: "admin",
+      appRoleName: "admin",
     },
   });
   console.log("role", admin);
@@ -27,7 +27,7 @@ async function createRoles() {
   const user = await prisma.appRole.create({
     data: {
       appRoleId: 3,
-      name: "user",
+      appRoleName: "user",
     },
   });
   console.log("role", user);
@@ -53,7 +53,7 @@ async function createUserRoles() {
 
   const role = await prisma.appRole.findFirst({
     where: {
-      name: "superuser",
+      appRoleName: "superuser",
     },
   });
 
