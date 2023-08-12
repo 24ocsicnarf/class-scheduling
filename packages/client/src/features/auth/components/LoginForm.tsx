@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { trpc } from "../../../trpc";
-import { DevTool } from "@hookform/devtools";
+// import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   LoginFormData,
@@ -60,7 +60,7 @@ export const LoginForm = () => {
           <Button type="submit">Log in</Button>
         </div>
       </form>
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </div>
   );
 };

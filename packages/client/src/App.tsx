@@ -49,7 +49,12 @@ function App() {
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
-        loggerLink(),
+        loggerLink({
+          enabled: (opts) =>
+            (process.env.NODE_ENV === "development" &&
+              typeof window !== "undefined") ||
+            (opts.direction === "down" && opts.result instanceof Error),
+        }),
         httpBatchLink({
           url: `${process.env.REACT_APP_TRPC_URL}`,
           fetch(url, options) {
