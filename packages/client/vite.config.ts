@@ -11,4 +11,5 @@ export default defineConfig({
       "@root": path.resolve(__dirname, "../node_modules"),
     },
   },
+  define: { "process.env": process.env },
 });

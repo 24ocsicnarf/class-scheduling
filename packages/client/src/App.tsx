@@ -51,7 +51,7 @@ function App() {
       links: [
         loggerLink(),
         httpBatchLink({
-          url: "http://localhost:8000/trpc",
+          url: `${process.env.REACT_APP_TRPC_URL}`,
           fetch(url, options) {
             return fetch(url, {
               ...options,
@@ -73,9 +73,13 @@ function App() {
               <Route element={<MainLayout />}>
                 {sidebarMenus
                   .flatMap((s) => s.menus)
-                  .map((menu, index) => {
+                  .map((menu) => {
                     return (
-                      <Route key={index} path={menu.path} element={menu.page} />
+                      <Route
+                        key={menu.path}
+                        path={menu.path}
+                        element={menu.page}
+                      />
                     );
                   })}
               </Route>

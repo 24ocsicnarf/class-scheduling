@@ -9,7 +9,7 @@ const serverConfig: {
   cookieSecret: string;
   accessTokenExpiresInSeconds: number;
 } = {
-  port: 8000,
+  port: process.env.NODE_PORT as unknown as number,
   origin: process.env.ORIGIN as unknown as string,
   dbUri: process.env.DATABASE_URL as unknown as string,
   secretKey: process.env.SECRET_KEY as string,

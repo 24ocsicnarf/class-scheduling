@@ -43,8 +43,8 @@ export const authRouter = router({
         });
       }
 
-      // Generate a refresh and access token
-      // Send refresh token back as cookie, access token as in-memory
+      // TODO: Generate a refresh and access token
+      // TODO: Send refresh token back as cookie, access token as in-memory
       const accessToken = generateAccessToken(existingUser);
 
       ctx.res.cookie("token", accessToken, {
