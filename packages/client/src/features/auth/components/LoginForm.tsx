@@ -15,7 +15,7 @@ import { PasswordInput } from "@/components/password-input";
 export const LoginForm = () => {
   const navigate = useNavigate();
 
-  const { register, control, handleSubmit } = useForm<LoginFormData>({
+  const { register, handleSubmit } = useForm<LoginFormData>({
     resolver: zodResolver(LoginFormSchema),
   });
 
