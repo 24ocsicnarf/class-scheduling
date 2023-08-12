@@ -45,3 +45,4 @@ app.listen(port, () => {
 export type AppRouter = typeof appRouter;
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
+export { app };

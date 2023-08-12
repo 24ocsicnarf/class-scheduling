@@ -1,6 +1,5 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" },
-    { "source": "/trpc/(.*)", "destination": "/trpc" }
-  ]
+  "builds": [{ "src": "/packages/server/src/app.ts", "use": "@now/node" }],
+  "routes": [{ "src": "/trpc/(.*)", "dest": "/packages/server/src/app.ts" }],
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
