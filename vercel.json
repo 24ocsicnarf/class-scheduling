@@ -1,11 +1,7 @@
 {
   "functions": {
     "packages/server/src/app.ts": {
-      "includeFiles": [
-        "packages/server/src/**/*.ts",
-        "packages/server/src/config/school.json"
-      ],
-      "excludeFiles": "packages/server/src/db/init.ts"
+      "memory": 256
     }
   }
 }
