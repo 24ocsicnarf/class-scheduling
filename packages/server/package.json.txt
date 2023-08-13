@@ -1,2 +1,0 @@
-
-    "db:migrate": "npx prisma migrate dev --name user-entity --create-only && pnpm prisma generate",
