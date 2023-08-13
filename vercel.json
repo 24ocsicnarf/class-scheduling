@@ -5,7 +5,7 @@
         "packages/server/src/**/*.ts",
         "packages/server/src/config/school.json"
       ],
-      "excludeFiles": ["packages/server/src/db/init.ts"]
+      "excludeFiles": "packages/server/src/db/init.ts"
     }
   }
 }
