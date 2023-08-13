@@ -28,7 +28,7 @@ app.use(
 );
 
 app.use(
-  "/api/trpc",
+  "/trpc",
   trpcExpress.createExpressMiddleware({
     router: appRouter,
     createContext,
@@ -45,4 +45,5 @@ app.listen(port, () => {
 export type AppRouter = typeof appRouter;
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
-export { app };
+
+export default app;
