@@ -1,6 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" },
-    { "source": "/trpc/(.*)", "destination": "/trpc" }
-  ]
-}
