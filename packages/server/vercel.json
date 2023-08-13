@@ -1,5 +1,5 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/api/trpc" }],
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
   "functions": {
     "api/*.ts": {
       "includeFiles": "src/**/*"
