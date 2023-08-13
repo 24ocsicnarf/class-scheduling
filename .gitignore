@@ -7,4 +7,3 @@ school.json
 .turbo
 build/**
 dist/**
-.vercel
