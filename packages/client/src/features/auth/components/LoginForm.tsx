@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { trpc } from "../../../trpc";
+import { trpc } from "@/trpc";
 // import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {

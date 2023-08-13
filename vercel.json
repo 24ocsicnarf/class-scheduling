@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "packages/server/src/app.ts": {
-      "memory": 256
-    }
-  }
-}
