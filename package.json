@@ -11,5 +11,8 @@
     "concurrently": "^8.2.0",
     "dotenv-cli": "^7.2.1",
     "wsrun": "^5.2.4"
+  },
+  "dependencies": {
+    "vercel": "^31.2.3"
   }
 }

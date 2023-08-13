@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/(.*)", "destination": "/" },
     { "source": "/api/trpc/(.*)", "destination": "packages/server/src/app.ts" }
   ]
 }
