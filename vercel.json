@@ -1,0 +1,5 @@
+{
+  "functions": {
+    "packages/server/src/app.ts": {}
+  }
+}
