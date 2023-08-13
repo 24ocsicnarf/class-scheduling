@@ -1,9 +1,0 @@
-{
-  "rewrites": [{ "source": "packages/client/(.*)", "destination": "/" }],
-  "rewrites": [{ "source": "packages/server/(.*)", "destination": "/api" }],
-  "functions": {
-    "api/*.ts": {
-      "includeFiles": "packages/server/src/**/*"
-    }
-  }
-}
