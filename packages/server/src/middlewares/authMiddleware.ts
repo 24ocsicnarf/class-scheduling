@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { t } from "../t";
 
 export const authMiddleware = t.middleware(async ({ ctx, next }) => {
-  const cookies = cookie.parse(ctx.req.headers.cookie ?? "");
+  const cookies = cookie.parse(ctx.req.cookies ?? "");
   console.log("cookies", cookies);
   console.log("ctx.req.path", ctx.req.path);
 
