@@ -51,6 +51,10 @@ export const authRouter = router({
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.PRODUCTION_DOMAIN ?? ".localhost"
+            : ".localhost",
         expires: addSeconds(
           Date.now(),
           serverConfig.accessTokenExpiresInSeconds
