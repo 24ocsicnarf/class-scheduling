@@ -14,7 +14,7 @@ const serverConfig: {
   dbUri: process.env.DATABASE_URL as unknown as string,
   secretKey: process.env.SECRET_KEY as string,
   cookieSecret: process.env.COOKIE_SECRET as string,
-  accessTokenExpiresInSeconds: 24 * 60 * 60,
+  accessTokenExpiresInSeconds: 2 * 60 * 60,
 };
 
 export default serverConfig;

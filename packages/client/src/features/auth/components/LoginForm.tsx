@@ -20,7 +20,8 @@ export const LoginForm = () => {
   });
 
   const { mutate: logIn } = trpc.auth.logIn.useMutation({
-    onSuccess() {
+    onSuccess(data) {
+      document.cookie = `token=${data.token};max-age=7200;path=/`;
       navigate("/dashboard");
     },
     onError(error) {
