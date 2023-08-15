@@ -47,19 +47,19 @@ export const authRouter = router({
       // TODO: Send refresh token back as cookie, access token as in-memory
       const accessToken = generateAccessToken(existingUser);
 
-      // ctx.res.cookie("token", accessToken, {
-      //   httpOnly: true,
-      //   secure: process.env.NODE_ENV === "production",
-      //   sameSite: "lax",
-      //   domain:
-      //     process.env.NODE_ENV === "production"
-      //       ? process.env.PRODUCTION_DOMAIN ?? ".localhost"
-      //       : ".localhost",
-      //   expires: addSeconds(
-      //     Date.now(),
-      //     serverConfig.accessTokenExpiresInSeconds
-      //   ),
-      // });
+      ctx.res.cookie("token", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.PRODUCTION_DOMAIN ?? ".localhost"
+            : ".localhost",
+        expires: addSeconds(
+          Date.now(),
+          serverConfig.accessTokenExpiresInSeconds
+        ),
+      });
 
       return {
         userId: existingUser.appUserId,

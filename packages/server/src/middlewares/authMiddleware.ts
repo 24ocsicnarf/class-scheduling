@@ -5,15 +5,16 @@ import { TRPCError } from "@trpc/server";
 import { t } from "../t";
 
 export const authMiddleware = t.middleware(async ({ ctx, next }) => {
-  const cookies = cookie.parse(ctx.req.cookies ?? "");
-  console.log("cookies", cookies);
-  console.log("ctx.req.path", ctx.req.path);
+  // const cookies = cookie.parse(ctx.req.cookies ?? "");
+  // console.log("cookies", cookies);
+  // console.log("ctx.req.path", ctx.req.path);
+  console.log("ctx.req.headers", ctx.req.headers);
 
-  if (!("token" in cookies)) {
+  if (!("Authorization" in ctx.req.headers)) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const cookieToken = cookies["token"];
+  const cookieToken = ctx.req.headers.authorization;
 
   if (!cookieToken) {
     throw new TRPCError({ code: "UNAUTHORIZED" });

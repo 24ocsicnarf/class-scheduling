@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/password-input";
+import { setToken } from "@/App";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export const LoginForm = () => {
 
   const { mutate: logIn } = trpc.auth.logIn.useMutation({
     onSuccess(data) {
-      document.cookie = `token=${data.token};max-age=7200;path=/`;
+      setToken(data.token);
       navigate("/dashboard");
     },
     onError(error) {

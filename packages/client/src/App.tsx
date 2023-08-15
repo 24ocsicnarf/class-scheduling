@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { loggerLink, httpBatchLink, TRPCClientErrorLike } from "@trpc/client";
 import { trpc } from "./trpc.ts";
@@ -12,6 +13,12 @@ import { useState } from "react";
 import RequireAuth from "@/features/auth/RequireAuth.tsx";
 import { Maybe } from "@trpc/server";
 import { AppRouter } from "server";
+
+let token: string;
+
+export function setToken(accessToken: string) {
+  token = accessToken;
+}
 
 function App() {
   const queryClientRetry = (failureCount: number, _error: unknown) => {
@@ -62,6 +69,11 @@ function App() {
               ...options,
               credentials: "include",
             });
+          },
+          headers: () => {
+            return {
+              authorization: token,
+            };
           },
         }),
       ],
