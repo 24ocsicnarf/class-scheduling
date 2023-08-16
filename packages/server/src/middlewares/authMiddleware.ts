@@ -10,7 +10,7 @@ export const authMiddleware = t.middleware(async ({ ctx, next }) => {
   // console.log("ctx.req.path", ctx.req.path);
   console.log("ctx.req.headers", ctx.req.headers);
 
-  if (!("Authorization" in ctx.req.headers)) {
+  if (!("authorization" in ctx.req.headers)) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
