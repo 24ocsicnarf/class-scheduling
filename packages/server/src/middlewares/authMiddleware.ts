@@ -1,6 +1,6 @@
 import serverConfig from "../config/serverConfig";
 import * as jwt from "jsonwebtoken";
-import cookie from "cookie";
+// import cookie from "cookie";
 import { TRPCError } from "@trpc/server";
 import { t } from "../t";
 

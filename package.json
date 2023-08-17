@@ -9,7 +9,7 @@
   ],
   "devDependencies": {
     "concurrently": "^8.2.0",
-    "dotenv-cli": "^7.2.1",
+    "dotenv-cli": "^7.3.0",
     "wsrun": "^5.2.4"
   }
 }
